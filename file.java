@@ -6,5 +6,6 @@ class file
 	  int a=10, b=20;
 	  int c=a+b;
         System.out.println("c value = " + c);
+	System.out.println("Success");
    }
 }
