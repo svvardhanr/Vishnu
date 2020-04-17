@@ -1,0 +1,35 @@
+#!/bin/sh
+URL=$1
+curl --fail -O -k ${URL} *.sh
+fname=`basename $URL`
+unzip -j $fname '*.sql'
+
+if [ $? -eq 0 ]
+then
+   echo "DOD files downloaded successfully"
+else
+   echo "Downloading DOD files failed"
+   exit 1
+fi
+
+for file in `ls *[[:digit:]].sql|sort -t'_' -nk3`
+do
+   if [[ $file =~ "Config" ]];
+   then
+      sh /aml/ecmbd01/RUN_DB_SCRIPT/Config/db_script_implementer_config.sh $file
+	  if [ $? -ne 0 ]
+	  then 
+	     exit 1
+	  fi
+   fi
+
+   if [[ $file =~ "Atomic" ]];
+   then
+      sh /aml/ecmbd01/RUN_DB_SCRIPT/Atomic/db_script_implementer_atomic.sh $file
+	  if [ $? -ne 0 ]
+	  then 
+	     exit 1
+	  fi
+   fi
+done
+exit 0
